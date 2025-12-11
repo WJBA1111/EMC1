@@ -1,45 +1,14 @@
-# An example mod using RetroFuturaGradle
+设置开发环境
+./gradlew.bat setupDecompWorkspace
 
-See [build.gradle.kts](build.gradle.kts) and [settings.gradle.kts](settings.gradle.kts) for the buildscript.
-When in doubt, refer to the javadocs on RFG classes (you should be able to navigate to them in IntelliJ while working on the gradle scripts) and the Gradle User Guide.
+清楚缓存
+./gradlew cleanCache
 
-## Setting up the dev workspace (optional, done automatically if you build or run)
-```
-  Linux: ./gradlew setupDecompWorkspace
-Windows: ./gradlew.bat setupDecompWorkspace
-```
+运行客户端
+./gradlew.bat runClient
 
-Make sure to refresh the IDE Gradle model after setting up the workspace for the first time, otherwise it might not find the Minecraft and Forge classes.
+运行服务端
+./gradlew.bat runServer
 
-## Compiling
-```
-  Linux: ./gradlew build
-Windows: ./gradlew.bat build
-```
-
-## Running the client
-```
-  Linux: ./gradlew runClient
-Windows: ./gradlew.bat runClient
-Optional arguments:
- ./gradlew runClient [--debug-jvm] [--args minecraft arguments] [--username MyUser] [--uuid Overwrite-uuid]
-```
-
-## Running the server
-```
-  Linux: ./gradlew runServer
-Windows: ./gradlew.bat runServer
-Optional arguments:
- ./gradlew runServer [--debug-jvm] [--args nogui]
-```
-
-## Publishing to Maven
-```
-Local:
-  Linux: ./gradlew publishToMavenLocal
-Windows: ./gradlew.bat publishToMavenLocal
-
-Remote:
-  Linux: ./gradlew publish
-Windows: ./gradlew.bat publish
-```
+编译
+./gradlew.bat build
