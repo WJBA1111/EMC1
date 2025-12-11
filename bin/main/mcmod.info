@@ -1,0 +1,14 @@
+[
+  {
+    "modid": "emc1",
+    "name": "等价交换全物品emc1",
+    "version": "${modVersion}",
+    "mcversion": "1.7.10",
+    "modtype": "coremod",
+    "description": "等价交换全物品emc1",
+    "url": "https://github.com/GTNewHorizons/RetroFuturaGradle/",
+    "credits": "",
+    "authorList": ["lyl"],
+    "dependencies": ["ProjectE"]
+  }
+]

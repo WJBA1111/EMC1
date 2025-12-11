@@ -1,0 +1,108 @@
+🟥 ✦ Forge 1.7.10 传统 CoreMod 加载流程
+
+要实现 CoreMod，需要：
+
+MANIFEST.MF
+
+一个实现 IFMLLoadingPlugin 的类
+
+（可选）实现 IFMLCallHook
+
+其中你的代码类似于：
+
+FMLCorePlugin: lyl.emc1.MixinLoader
+FMLCorePluginContainsFMLMod: true
+
+
+Forge 在启动时会扫描 MANIFEST 并直接 new 这个类。
+
+
+
+
+
+
+
+🟩 ✦ 2. MixinLoader 是怎么被加载的？
+
+Forge 的 FML 在启动阶段执行：
+
+CoreModManager.discoverCoreMods
+
+
+过程：
+
+扫描所有 jar 的 META-INF/MANIFEST.MF
+
+找到字段：
+
+FMLCorePlugin: lyl.emc1.MixinLoader
+
+
+使用 LaunchClassLoader 加载类
+
+调用无参构造函数（你的日志就是这时打印的）
+
+MixinBootstrap.init() 开始初始化 mixin 系统
+
+
+
+
+
+
+
+
+🟨 ✦ 3. 为什么这种写法在 GTNH 会报错？
+
+GTNH 使用：
+
+Unimixins 0.15 (Mixin 0.8.7 backport)
+
+RetroFuturaBootstrap 的 SystemClassLoader
+
+与 Forge 原版 CoreMod 生命周期冲突
+
+于是出现你看到的：
+
+loader constraint violation
+GlobalProperties$Keys 被两个 classloader 加载
+
+
+原因：
+
+✔ 你的 CoreMod 在 “太早” 时调用了 MixinBootstrap.init()
+✔ GTNH 启动器（unimixins）会再次初始化 Mixin
+✔ 发生 classloader 冲突 → 崩溃
+
+
+
+
+
+
+
+🟧 ✦ 4. GTNH 现在为什么禁止这种写法？
+
+因为：
+
+• Forge 的 CoreMod 加载时机不兼容
+• Mixin 必须由 unimixins 自动控制
+• 手动初始化会破坏整个 Mixin 环境
+
+所以 GTNH 官方要求：
+不要使用 IFMLLoadingPlugin，也不要写自己的 MixinBootstrap.init()。
+
+
+
+
+
+
+🟦 ✦ 5. 那现在 GTNH 正确的加载方式是什么？（对比）
+项目	                                           旧式 Forge (你之前)	         GTNH (现在正确方式)
+Mixin 启动	                                          MixinBootstrap.init()	               由 unimixins 自动完成
+入口	                                          IFMLLoadingPlugin	         SPI (META-INF/services/...)
+mixins.json 加载	                      Mixins.addConfiguration()	             自动扫描 SPI
+MANIFEST.MF	                         须写 FMLCorePlugin	         不允许写，会冲突
+classloader	                          LaunchClassLoader	        SystemClassLoader + patched LWJGL3
+
+
+
+
